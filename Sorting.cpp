@@ -5,7 +5,6 @@
 #include <random>   
 #include <iomanip> // std::setw
 #include <utility> // std::pair
-#include <malloc.h> 
 
 /* 
 Lab1 - 8 sorting algoritms
@@ -39,6 +38,7 @@ bool isValideNumbers(vector<int> numbers, const string& str)
                 return false;
         }
     }
+    return true;
 }
 
 int ValidateChoice(int choice_number)
@@ -371,7 +371,8 @@ void sift(vector<int>& numbers, int size, int parent_index, int& comparisons, in
 
 int getLatestParentIndex(int size)
 {
-    return { (size - 1) / 2 };
+    size -= 1;
+    return size / 2;
 }
 
 
@@ -454,7 +455,7 @@ pair<int, int> wrapper_qsort(vector<int> numbers)
 }
 
 
-void PrintSortingResults(const vector<pair<int, int>>& comparisons_permutations, int sort_count, int number_of_vectors) {
+void PrintSortingResults(const vector<pair<int, int> >& comparisons_permutations, int sort_count, int number_of_vectors) {
     // Table header
     cout << left << "sort_names" << setw(15) << " " << "| "
         << setw(27) << "ordered_numbers"
@@ -492,13 +493,13 @@ void PrintSortingResults(const vector<pair<int, int>>& comparisons_permutations,
 
     // print in the foot "comparisons | permutations"
     for (int j = 0; j < number_of_vectors; ++j) {
-        cout << setw(12) << "comparisons" << " | " << "permutations" << "| "; // заголовок
+        cout << setw(12) << "comparisons" << " | " << "permutations" << "| "; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
     cout << endl;
 }
 
 
-void main()
+int main()
 {
     int choice_number;
 
@@ -512,10 +513,10 @@ void main()
     
     // 8 sorting algoritms for ordered_numbers, reverse_ordered_numbers, random_numbers
     int sort_count = 8, number_of_vectors = 3;
-    vector<pair<int, int>> comparisons_permutations(sort_count * number_of_vectors);
+    vector<pair<int, int> > comparisons_permutations(sort_count * number_of_vectors);
 
     // all data values
-    vector<vector<int>> vectors(number_of_vectors);
+    vector<vector<int> > vectors(number_of_vectors);
     vectors[0] = ordered_numbers;
     vectors[1] = reverse_ordered_numbers;
     vectors[2] = random_numbers;
