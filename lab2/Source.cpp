@@ -5,6 +5,15 @@
 #include <vector>
 
 
+/*
+Author: Tsvetkov Mihail
+Task: do recursively 4 algorithms:
+    find max
+    hanoi's towers
+    knight's move
+    queen's locations
+*/
+
 using namespace std;
 
 
