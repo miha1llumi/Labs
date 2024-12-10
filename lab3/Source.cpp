@@ -181,8 +181,8 @@ string find_max_subsequence(string word1, string word2) {
     vector<vector<int>> W(m + 1, vector<int>(n + 1, 0)); 
     vector<vector<pair<int, int>>> prev(m + 1, vector<pair<int, int>>(n + 1)); 
 
-    for (int i = 1; i <= m; ++i) {
-        for (int j = 1; j <= n; ++j) {
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
             if (word1[j - 1] == word2[i - 1]) {
                 W[i][j] = W[i - 1][j - 1] + 1;
                 prev[i][j] = { i - 1, j - 1 };
@@ -231,7 +231,7 @@ pair<int, vector<int>> find_max_utility() {
     vector<int> values(num_items);
     vector<int> indices(num_items);
 
-    for (int i = 0; i < num_items; ++i) {
+    for (int i = 0; i < num_items; i++) {
         cout << "Enter weight and utility of item: " << i + 1 << ": ";
         cin >> weights[i] >> values[i];
         indices[i] = i + 1;
@@ -240,8 +240,8 @@ pair<int, vector<int>> find_max_utility() {
     vector<vector<int>> knapsack_values(num_items + 1, vector<int>(max_weight + 1, 0));
     vector<vector<int>> item_used(num_items + 1, vector<int>(max_weight + 1, 0));
 
-    for (int i = 1; i <= num_items; ++i) {
-        for (int w = 1; w <= max_weight; ++w) {
+    for (int i = 1; i <= num_items; i++) {
+        for (int w = 1; w <= max_weight; w++) {
             if (weights[i - 1] <= w) {
                 int value_with_item = values[i - 1] + knapsack_values[i - 1][w - weights[i - 1]];
                 if (value_with_item > knapsack_values[i - 1][w]) {
@@ -281,66 +281,88 @@ pair<int, vector<string>> minimize_operations(int n) {
     Op[1] = 0;
 
     for (int i = 2; i <= n; ++i) {
-        Op[i] = Op[i - 1] + 1; 
+        Op[i] = Op[i - 1] + 1; // multiply by 1
 
         for (int j = 2; j <= i / 2; ++j) {
-            Op[i] = min(Op[i], Op[j] + Op[i - j] + 1); 
+            Op[i] = min(Op[i], Op[j] + Op[i - j] + 1); // multiply
             if (i % j == 0) {
-                Op[i] = min(Op[i], Op[i / j] + j - 1); 
+                Op[i] = min(Op[i], Op[i / j] + j - 1); // degree expansion
             }
         }
     }
     vector<vector<string>> seq(n + 1);
-    Op[1] = 0; 
+    Op[1] = 0; // for degree 1 - 0 operatinos
 
-    for (int i = 2; i <= n; ++i) {
+    for (int i = 2; i <= n; i++) {
+        // Start with the "multiply by 1" operation
         Op[i] = Op[i - 1] + 1;
-        seq[i] = seq[i - 1]; 
-        seq[i].push_back(" * 1"); 
+        seq[i] = seq[i - 1]; // Copy the sequence of operations
+        seq[i].push_back(" * 1"); // Multiplication by 1
 
-        for (int j = 1; j < i; ++j) {
+        // Multiplication
+        for (int j = 1; j < i; j++) {
             if (Op[j] + Op[i - j] + 1 < Op[i]) {
                 Op[i] = Op[j] + Op[i - j] + 1;
-                seq[i].clear(); 
+                seq[i].clear(); // Clear the current sequence
                 seq[i].insert(seq[i].end(), seq[j].begin(), seq[j].end());
                 seq[i].insert(seq[i].end(), seq[i - j].begin(), seq[i - j].end());
-                seq[i].push_back(" * "); 
+                seq[i].push_back(" * "); // Add the multiplication operation
             }
         }
 
-        for (int j = 2; j <= i; ++j) {
+        // Exponentiation
+        for (int j = 2; j <= i; j++) {
             if (i % j == 0) {
                 if (Op[i / j] + j - 1 < Op[i]) {
                     Op[i] = Op[i / j] + j - 1;
-                    seq[i].clear(); 
+                    seq[i].clear(); // Clear the current sequence
                     seq[i].insert(seq[i].end(), seq[i / j].begin(), seq[i / j].end());
-                    seq[i].push_back(" ^ " + to_string(j)); 
+                    seq[i].push_back(" ^ " + to_string(j)); // Add the exponentiation operation
                 }
             }
         }
     }
 
     return { Op[n], seq[n] };
+
+
+    return { Op[n], seq[n] };
 }
 
-int main() {
-    setlocale(LC_ALL, "russian");
+vector<vector<int>> getMatrixFromUser(int size) {
+    vector<vector<int>> matrix(size, vector<int>(size));
+    cout << "Enter the elements of the " << size << "x" << size << " matrix:" << endl;
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            cin >> matrix[i][j];
+        }
+    }
+    return matrix;
+}
 
-    vector<vector<int>> vec = {
-        {7},
-        {3, 8},
-        {8, 1, 0},
-    };
-
-    auto result = findMaxTrianglePath(vec);
-    cout << "Maximum path in triangle: " << result.first << endl;
-    cout << "Path: ";
-    for (int value : result.second) {
+void printMatrix(const vector<int>& v) {
+    for (int value : v) {
         cout << value << " ";
     }
     cout << endl;
+}
 
-    vector<vector<int>> mt = {
+void printMatrix(const vector<string>& v) {
+    for (string value : v) {
+        cout << value << " ";
+    }
+    cout << endl;
+}
+
+// For triangle task
+vector<vector<int>> vec = {
+        {7},
+        {3, 8},
+        {8, 1, 0},
+};
+
+// For rectangle task
+vector<vector<int>> mt = {
        {5, 7, 8},
        {5, 6, 7, 6},
        {3, 2, 5},
@@ -348,53 +370,47 @@ int main() {
        {5, 7, 9},
        {3, 2, 5, 2},
        {4, 6, 7}
-    };
+};
 
+int main() {
+    // Triangle task
+    pair<int, vector<int>> result = findMaxTrianglePath(vec);
+    cout << "Maximum path in triangle: " << result.first << endl;
+    cout << "Path: ";
+    printMatrix(result.second);
+
+    // Reactangle task
     pair<int, vector<int>> result2 = find_min_turtle_path(mt);
     cout << "Min path sum in rectangle: " << result2.first << endl;
     cout << "Path: ";
-    for (int val : result2.second) {
-        cout << val << " ";
-    }
-    cout << endl;
-
-    // ---------------------------------------------------------------
+    printMatrix(result2.second);
+    
+    // Degree task
     int n;
-
     cout << "Enter degree of number: ";
     cin >> n;
-
     pair<int, vector<string>> result3 = minimize_operations(n);
-    cout << "Min numbers of operations: " << result3.first << endl;
-    cout << "Sequence of operations:" << endl;
-    for (string val : result3.second) {
-        cout << val << " ";
-    }
-    cout << endl;
+    cout << "Min operations number: " << result3.first << endl;
+    cout << "Operations sequence:" << endl;
+    printMatrix(result3.second);
 
+    // Subsequences task
     string word1, word2;
-
-    // Enter first word
     do {
         cout << "Enter first word (only letters 'a', 'g', 'c', 't'): ";
         cin >> word1;
     } while (!is_valid_word(word1));
-
-    // Enter second word
     do {
         cout << "Enter second word (only letters 'a', 'g', 'c', 't'): ";
         cin >> word2;
     } while (!is_valid_word(word2));
-
     string result4 = find_max_subsequence(word1, word2);
     cout << "Max subsequence: " << result4 << endl;
 
+    // Bagpack task
     pair<int, vector<int>> result5 = find_max_utility();
     cout << "Max utility: " << result5.first << endl;
     cout << "Items in bagpack: ";
-    for (int item : result5.second) {
-        cout << item << " ";
-    }
-    cout << endl;
+    printMatrix(result5.second);
     return 0;
 }
